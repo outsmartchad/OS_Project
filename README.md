@@ -16,14 +16,23 @@
 
 • Test case 8-10: complex matrix operations. There are more than 5 matrixes and multiple types of operators in the expression. The matrix size in those cases are smaller than 1000 * 1000, thus the time requirement is loose and set to 10 seconds.
 
+
 # Each test consists of 5 files with different filename extension:
-13 CS3103 - Operating Systems
+
 • n.json (in tests/config/ directory): The configuration of test case n.
+
     ▪ binary: Indicates the data type of input and output is binary.
+    
     ▪ timeout: Time limitation (seconds).
+    
     ▪ seed: The seed used to generate the content of input files.
+    
     ▪ params: Including the maximum matrix size and the expression.
+    
     ▪ description: A short text description of the test.
+    
 • n.rc (in tests/stdout/ directory): The return code the program should return (usually 0 or 1).
+
 • n.out (in tests/stdout/ directory): The standard output expected from the test.
+
 • n/input.txt (in tests/stdin/ directory): The test data.
