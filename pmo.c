@@ -71,7 +71,7 @@ int main() {
     char expression[]={}; 
     scanf("%s", expression); 
     int noOfMatrix = NoOfMatrix(expression); // cal how many matrix in expression
-    printf("%d", noOfMatrix);
+    printf("There are %d matrix in expression.\n", noOfMatrix);
     for(int i=0; i<noOfMatrix; i++){ // A loop to input all the matrices
         // second input -> size of a nxm matrix
         int n, m; // n = row, m = col
