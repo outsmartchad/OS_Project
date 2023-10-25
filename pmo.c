@@ -1,9 +1,23 @@
+////////////////////////////////Libraries///////////////////////////////////////
+#include <assert.h>
+#include <fcntl.h>
 #include <stdio.h>
-#include <pthread.h>
+#include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
+#include <sys/types.h>
+// #include <sys/sysinfo.h> this is for window
+#include <sys/sysctl.h> // for mac 
+#include <unistd.h>
+// source c file OS Project
+// 睇comment 理解咗啲code 先 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////GLOBAL VARIABLES/STRUCTS////////////////////////////
 #define MAX_SIZE 1000
-
+// 所有thread 都會access 到呢個 array of matrix
+/***** Shared data part *****/
+int **arr_Matrices[MAX_SIZE];
 // defining data structure of stack 
 typedef struct {
     char operation_stack[MAX_SIZE]; // our stack to store the +, *, -
@@ -11,7 +25,7 @@ typedef struct {
     int operation_stack_top; // the current top element index of our operation stack
     int matrix_stack_top; // the current top element index of our matrix stack
 } Stacks; // this structure defined as Stacks
-
+////////////////////////////////////////////////////////////////////////////////
 /************* basic function of our stacks ***************/
 int get_operation_stack_size(Stacks* stack){
     return stack->operation_stack_top+1;
@@ -43,46 +57,37 @@ int** peek_Mat(Stacks* stack){
     int top_idx = stack->matrix_stack_top;
     return stack->matrix_stack[top_idx];
 }
-/***********************************************************/
-/***** 
-source c file OS Project
-睇comment 理解咗啲code 先 
 
-*****/
-// 所有thread 都會access 到呢個 array of matrix
-int **arr_Matrices[MAX_SIZE];
+////////////////////////////////FUNCTIONS///////////////////////////////////////
 void matrix_Multiplication();
 
 void matrix_Addition();
 
 void matrix_Subtraction();
 
-int NoOfMatrix(char expr[]){
-    int res = 0, len = strlen(expr);
-    for(int i=0; i<len; i++){
-        if((int)expr[i]>=65&&(int)expr[i]<=90) res++;
-    }
-    return res;
-}
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////MAIN FUNCTION//////////////////////////////////
+
 int main() {
 
     /***** Below is the input part*****/
     // first input -> A-B / A+B*C+D / A*B+C
     char expression[]={}; 
     scanf("%s", expression); 
-    int noOfMatrix = NoOfMatrix(expression); // cal how many matrix in expression
-    printf("There are %d matrix in expression.\n", noOfMatrix);
+    int noOfMatrix = strlen(expression) / 2 + 1; // cal how many matrix in expression
+    // printf("%d", noOfMatrix);
+    
     for(int i=0; i<noOfMatrix; i++){ // A loop to input all the matrices
         // second input -> size of a nxm matrix
         int n, m; // n = row, m = col
-        printf("Input the size for matrix, separated by space: ");
+        // printf("Input the size for matrix, separated by space: ");
         scanf("%d %d", &n , &m);
         /* initialization of our matrix */
         int **matrix = (int **)malloc(n* sizeof(int*)); // creating a 2d arr with #n of 1-d array inside it
-        for(int i=0; i<n; i++) matrix[i] = (int*)malloc(m* sizeof(int)); // for every row of array, we have m integers inside it
-        printf("\n");
+        for(int i=0; i<n; i++) matrix[i] = (int*)malloc(m* sizeof(int)); // for every row of array, we have #m integers inside it
+        // printf("\n");
         // third input -> values of our matrix
-        printf("Please input the value for matrix: \n");
+        // printf("Please input the value for matrix: \n");
         for(int i=0; i<n; i++)
             for(int j=0; j<m; j++)
                 scanf("%d", &matrix[i][j]);
@@ -102,3 +107,4 @@ int main() {
      // pthread_join(thread1, NULL);
     return 0;
 }
+////////////////////////////////////////////////////////////////////////////////
