@@ -1,0 +1,11 @@
+{
+    "binary": 0,
+    "timeout": 1,
+    "seed": 10000103,
+    "params": {
+        "max_size": 100,
+        "expr": "A-B"
+    },
+    "description": "small matrix subtraction (smaller than ${matrixsize} * ${matrixsize}, ${timeout} sec timeout)",
+    "preparation": "cat ${filename} > /dev/null"
+}

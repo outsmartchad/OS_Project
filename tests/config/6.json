@@ -1,0 +1,11 @@
+{
+    "binary": 0,
+    "timeout": 1,
+    "seed": 10000141,
+    "params": {
+        "max_size": 500,
+        "expr": "A+B*C+D"
+    },
+    "description": "combination of matrix additions and matrix multiplications (smaller than ${matrixsize} * ${matrixsize}, ${timeout} sec timeout)",
+    "preparation": "cat ${filename} > /dev/null"
+}
