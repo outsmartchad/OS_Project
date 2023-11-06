@@ -132,7 +132,7 @@ int** allocate_memory(int r, int c){
 int** matrix_Multiplication(int **A, int **B);
 
 
-int** matrix_Addition(int** A, int** B, int** Asize, int** Bsize){
+void matrix_Addition(Stacks* stack, int** A, int** B, int** Asize, int** Bsize){
     assert(A!=NULL && B!=NULL);
     int row = Asize[0][0]; 
     int col = Asize[0][1];
@@ -142,7 +142,8 @@ int** matrix_Addition(int** A, int** B, int** Asize, int** Bsize){
             C[i][j] = A[i][j] + B[i][j];
         }
     }
-    return C;
+    push_Mat(stack, C);
+    push_Si(stack, Asize);
 }
 
 int** matrix_Subtraction(int **A, int **B);
@@ -222,6 +223,11 @@ int main() {
     push_Mat(s, Csize);
     matrix_Print(pop_Mat(s), pop_Si(s));
     */
+
+    //test2 //success
+    matrix_Addition(s, pop_Mat(s), pop_Mat(s), pop_Si(s), pop_Si(s));
+    //matrix_Print(pop_Mat(s), pop_Si(s));
+
     printf("Our stack: \n");
     for(int i=s->matrix_stack_top; i>=0; i--){
         matrix_Print(s->matrix_stack[i], s->size_stack[i]); // PROBLEM: printing only the first matrix of A+B 
