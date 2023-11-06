@@ -6,9 +6,20 @@
     - split the expression("A*B+C"/"A+B*C+D") for parallel calculation.
        - use two stacks as the project instructions?
        - how to deal with different size of matrix between them
-
+3. adding mutex lock to each different matrix
+   
+# 有可能要做嘅嘢
+1. adding usual wrappers to the functions from the library in case they are failing without being shown in the debug window.
+    a. ``` void Pthread_join(pthread_t thread, void **value_ptr) {
+    int rc = pthread_join(thread, value_ptr);
+    assert(rc == 0);
+}```
+2. we could define a matrix structure that includes a mutex lock and its value
+3. The global variable or some header function should be put in a new header file
+4. taking a different approach of concurrency of matrix addition/multiplication -> different version of grabbing a lock of that matrix
+   
 # Below is a brief description of each test case:
-• Test case 1-3: the small matrix operation including one matrix addition, or subtraction, or multiplicaiton. You can use this test case to debug your codes.
+• Test case 1-3: the small matrix operation including one matrix addition, or subtraction, or multiplication. You can use this test case to debug your codes.
 
 • Test case 4-5: multiple matrix operations. There are more than 3 matrixes in the expression. There is only one type of operator in the expression (addition and subtraction are regareded as the same operator). The matrix size in those cases are smaller than 500 * 500, thus the time requirement is only 1 second.
 
