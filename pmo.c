@@ -111,8 +111,8 @@ void matrix_Print(int** M){
     for(int i=0;i<row;i++){
         for(int j=0;j<col;j++){
             printf("%d ", M[i][j]);
-            printf("\n");
         }
+        printf("\n");
     }
 }
 
@@ -157,18 +157,19 @@ int main() {
         arr_Matrices[i] = allocate_memory(n, m);
         arr_Matrices[i] = mat;
     }
-    for(int i=0; i<noOfMatrix; i++){
-        matrix_Print(arr_Matrices[i]);
-    }
     // initialize our stack object
     init(s);
     // adding stack and char to our stacks
     for(int i=0; i<noOfMatrix; i++){
-        printf("Hi");
         push_Mat(s, arr_Matrices[i]);
     }
+    printf("Our stack: \n");
+    for(int i=s->matrix_stack_top; i>=0; i--){
+        matrix_Print(s->matrix_stack[i]);
+    }
+    // popping all the matrix
     while(!is_matStack_Empty(s)){
-        matrix_Print(pop_Mat(s));
+        pop_Mat(s);
     }
     //test
     // push_Mat(s, matrix_Addition(pop_Mat(arr_Matrices),pop_Mat(arr_Matrices)));
