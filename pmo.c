@@ -118,6 +118,8 @@ void matrix_Print(int** M){
 
 void release_memory(int **matrix){
     // this method is for releasing the memory of integer array
+    assert(matrix!=NULL);
+    free(matrix);
 }
 
 int** allocate_memory(int r, int c){
