@@ -30,14 +30,16 @@ typedef struct {
 ////////////////////////////////////////////////////////////////////////////////
 /************* basic function of our stacks ***************/
 int get_operation_stack_size(Stacks* stack){
+    assert(stack != NULL);
     return stack->operation_stack_top+1;
-
 }
 
 int get_matrix_stack_size(Stacks* stack){
+    assert(stack != NULL);
     return stack->matrix_stack_top+1;
 }
 void init(Stacks* stack){
+    assert(stack != NULL);
     stack->matrix_stack_top = -1;
     stack->operation_stack_top = -1;
     stack->operation_stack = (char*)calloc(MAX_SIZE, sizeof(char));
@@ -47,17 +49,20 @@ void init(Stacks* stack){
 }
 
 void push_Op(Stacks* stack, char operator){
+    assert(stack != NULL);
     stack->operation_stack_top++;
     int new_Idx = stack->operation_stack_top;
     stack->operation_stack[new_Idx] = operator;
 }
 
 void push_Mat(Stacks* stack, int **matrix){
+    assert(stack != NULL && matrix!=NULL);
     stack->matrix_stack_top++;
     int new_Idx = stack->matrix_stack_top;
     stack->matrix_stack[new_Idx] = matrix;
 }
 char pop_Op(Stacks* stack){
+    assert(stack!=NULL);
     int top_idx = stack->operation_stack_top;
     char op = stack->operation_stack[top_idx];
     stack->operation_stack_top -= 1;
@@ -66,6 +71,7 @@ char pop_Op(Stacks* stack){
 }
 
 int** pop_Mat(Stacks* stack){
+    assert(stack != NULL);
     int top_idx = stack->matrix_stack_top;
     int** matrix = stack->matrix_stack[top_idx];
     stack->matrix_stack_top -= 1;
@@ -74,6 +80,7 @@ int** pop_Mat(Stacks* stack){
 }
 
 int is_matStack_Empty(Stacks* s){
+    assert(s != NULL);
     return s->matrix_stack_top==-1;
 }
 
@@ -82,6 +89,7 @@ int** matrix_Multiplication(int **A, int **B);
 
 
 int** matrix_Addition(int** A, int** B){
+    assert(A!=NULL && B!=NULL);
     int row = 2;
     int col = 2;
     int **C = (int **)malloc(row * sizeof(int*));
@@ -97,6 +105,7 @@ int** matrix_Addition(int** A, int** B){
 int** matrix_Subtraction(int **A, int **B);
 
 void matrix_Print(int** M){
+    assert(M!=NULL);
     int row = 2;
     int col = 2;
     for(int i=0;i<row;i++){
@@ -112,6 +121,7 @@ void release_memory(int **matrix){
 }
 
 int** allocate_memory(int r, int c){
+    assert(r!=0||c!=0);
     // this method allocate memory to integer array
     int **matrix = (int **)calloc(r, sizeof(int*)); // creating a 2d arr with #n of 1-d array inside it
     for(int i=0; i<r; i++) matrix[i] = (int*)calloc(c, sizeof(int)); // for every row of array, we have #m integers inside it
@@ -150,7 +160,7 @@ int main() {
     for(int i=0; i<noOfMatrix; i++){
         matrix_Print(arr_Matrices[i]);
     }
-    // error
+    // initialize our stack object
     init(s);
     // adding stack and char to our stacks
     for(int i=0; i<noOfMatrix; i++){
