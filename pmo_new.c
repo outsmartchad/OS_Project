@@ -149,11 +149,23 @@ Matrix* mat_allocate_memory(int r, int c){
     matrix->row = r;
     return matrix;
 }
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////Threads FUNCTION///////////////////////////////
+
+void *threadFunction1( void *arg )
+{
+    int passValue = *(int *)(arg);
+    printf("Thread %d is running!",passValue);
+    return NULL;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////MAIN FUNCTION//////////////////////////////////
 
 int main() {
+    // pthread variable
+    pthread_t * threads;
     
     /***** Below is the input part*****/
     // first input -> A-B / A+B*C+D / A*B+C
@@ -192,7 +204,17 @@ int main() {
     while(!is_matStack_Empty(s)){
         pop_Mat(s);
     }
-    
+
+    // doing threading
+    for(int i = 0;i< numOfThreads;i++){
+        int *passValue;
+        passValue = (int *) malloc( sizeof(int) );
+        *passValue = i;
+        pthread_create( &threads[i], NULL, threadFunction1, (void *)passValue );
+    }
+    for (int i = 0; i < numOfThreads; i++ ) {
+        pthread_join( threads[i], NULL );
+    }
     //test
     // push_Mat(s, matrix_Addition(pop_Mat(arr_Matrices),pop_Mat(arr_Matrices)));
     // matrix_Print(pop_Mat(arr_Matrices));
