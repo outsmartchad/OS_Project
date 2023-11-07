@@ -103,6 +103,9 @@ Matrix* matrix_Multiplication(Matrix *A, Matrix *B);
 
 Matrix* matrix_Addition(Matrix *A, Matrix *B){
     assert(A!=NULL && B!=NULL);
+    assert(A->data!=NULL&&B->data!=NULL);
+    assert(A->col>0&&B->col>0);
+    assert(A->row>0&&B->row>0);
     int row = A->row;
     int col = B->col;
     Matrix* C = mat_allocate_memory(row, col);
@@ -116,13 +119,13 @@ Matrix* matrix_Addition(Matrix *A, Matrix *B){
 
 Matrix * matrix_Subtraction(Matrix *A, Matrix *B);
 
-void matrix_Print(int** M){
+void matrix_Print(Matrix* M){
     assert(M!=NULL);
-    int row = 2;
-    int col = 2;
+    int row = M->row;
+    int col = M->col;
     for(int i=0;i<row;i++){
         for(int j=0;j<col;j++){
-            printf("%d ", M[i][j]);
+            printf("%d ", M->data[i][j]);
         }
         printf("\n");
     }
@@ -186,7 +189,11 @@ int main() {
         printf("Please input the value for matrix: \n");
         for(int x=0; x<n; x++)
             for(int y=0; y<m; y++)
+            {
                 scanf("%d", &mat->data[x][y]);
+                mat->row = n;
+                mat->col = m;
+            }
         arr_Matrices[i] = mat_allocate_memory(n, m);
         arr_Matrices[i] = mat;
     }
@@ -198,23 +205,23 @@ int main() {
     }
     printf("Our stack: \n");
     for(int i=s->matrix_stack_top; i>=0; i--){
-        matrix_Print(s->matrix_stack[i]->data);
+        matrix_Print(s->matrix_stack[i]);
     }
     // popping all the matrix
     while(!is_matStack_Empty(s)){
         pop_Mat(s);
     }
 
-    // doing threading
-    for(int i = 0;i< numOfThreads;i++){
-        int *passValue;
-        passValue = (int *) malloc( sizeof(int) );
-        *passValue = i;
-        pthread_create( &threads[i], NULL, threadFunction1, (void *)passValue );
-    }
-    for (int i = 0; i < numOfThreads; i++ ) {
-        pthread_join( threads[i], NULL );
-    }
+    // // doing threading
+    // for(int i = 0;i< numOfThreads;i++){
+    //     int *passValue;
+    //     passValue = (int *) malloc( sizeof(int) );
+    //     *passValue = i;
+    //     pthread_create( &threads[i], NULL, threadFunction1, (void *)passValue );
+    // }
+    // for (int i = 0; i < numOfThreads; i++ ) {
+    //     pthread_join( threads[i], NULL );
+    // }
     //test
     // push_Mat(s, matrix_Addition(pop_Mat(arr_Matrices),pop_Mat(arr_Matrices)));
     // matrix_Print(pop_Mat(arr_Matrices));
