@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////GLOBAL VARIABLES/STRUCTS////////////////////////////
 #define MAX_SIZE 1000
-//#define MSize(m) (sizeof(m) / sizeof(m[0])) //Macro for finding matrix row:MSIZE(matrix); and col:MSIZE(matrix[0]);
+@define EXP_MAX_SIZE 20 //10 matrixs + 9 operands
 #define numOfThreads 4
 // defining a matrix structure
 typedef struct{
@@ -209,7 +209,7 @@ int main() {
     
     /***** Below is the input part*****/
     // first input -> A-B / A+B*C+D / A*B+C
-    char expression[MAX_SIZE] = {};
+    char expression[EXP_MAX_SIZE] = {};
     scanf("%s", expression);
     int explen = strlen(expression);
     int noOfMatrix = explen / 2 + 1; // cal how many matrix in expression
