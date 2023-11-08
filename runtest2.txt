@@ -1,0 +1,77 @@
+chinghong6@ubt20a:~/project$ make
+gcc -Wall -pthread -g -O3    pmo.c   -o pmo
+pmo.c: In function ‘main’:
+pmo.c:210:17: warning: unused variable ‘threads’ [-Wunused-variable]
+  210 |     pthread_t * threads;
+      |                 ^~~~~~~
+pmo.c:215:5: warning: ignoring return value of ‘scanf’, declared with attribute warn_unused_result [-Wunused-result]
+  215 |     scanf("%s", expression);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~
+pmo.c:229:9: warning: ignoring return value of ‘scanf’, declared with attribute warn_unused_result [-Wunused-result]
+  229 |         scanf("%d %d", &n , &m);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+pmo.c:238:17: warning: ignoring return value of ‘scanf’, declared with attribute warn_unused_result [-Wunused-result]
+  238 |                 scanf("%d", &mat->data[x][y]);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/string.h:495,
+                 from pmo.c:7:
+In function ‘strncpy’,
+    inlined from ‘main’ at pmo.c:255:13:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:106:10: warning: ‘__builtin_strncpy’ specified bound 1 equals destination size [-Wstringop-truncation]
+  106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘arr_allocate_memory’,
+    inlined from ‘mat_allocate_memory’ at pmo.c:188:20,
+    inlined from ‘main’ at pmo.c:242:27:
+pmo.c:180:28: warning: argument 1 range [18446744071562067968, 18446744073709551615] exceeds maximum object size 9223372036854775807 [-Walloc-size-larger-than=]
+  180 |     int **matrix = (int **)calloc(r, sizeof(int*)); // creating a 2d arr with #n of 1-d array inside it
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from pmo.c:6:
+pmo.c: In function ‘main’:
+/usr/include/stdlib.h:542:14: note: in a call to allocation function ‘calloc’ declared here
+  542 | extern void *calloc (size_t __nmemb, size_t __size)
+      |              ^~~~~~
+chinghong6@ubt20a:~/project$ make test
+TEST 0 - clean build (program should compile without errors or warnings)
+Test finished in 0.425 seconds
+RESULT passed
+
+TEST 1 - small matrix addition (smaller than 100 * 100, 1 sec timeout)
+Test finished in 0.020 seconds
+RESULT passed
+
+TEST 2 - small matrix multiplication (smaller than 100 * 100, 1 sec timeout)
+Test finished in 0.021 seconds
+RESULT passed
+
+TEST 3 - small matrix subtraction (smaller than 100 * 100, 1 sec timeout)
+Test finished in 0.018 seconds
+RESULT passed
+
+TEST 4 - matrix additions/subtractions (smaller than 500 * 500, 1 sec timeout)
+Test finished in 0.101 seconds
+RESULT passed
+
+TEST 5 - consecutive matrix multiplications (smaller than 500 * 500, 1 sec timeout)
+Test finished in 0.435 seconds
+RESULT passed
+
+TEST 6 - combination of matrix additions and matrix multiplications (smaller than 500 * 500, 1 sec timeout)
+Test finished in 0.189 seconds
+RESULT passed
+
+TEST 7 - combination of matrix additions and matrix multiplications 2 (smaller than 500 * 500, 1 sec timeout)
+Test finished in 0.214 seconds
+RESULT passed
+
+TEST 8 - complex matrix operations (smaller than 1000 * 1000, 10 sec timeout)
+Test finished in 4.444 seconds
+RESULT passed
+
+TEST 9 - complex matrix operations 2 (smaller than 1000 * 1000, 10 sec timeout)
+Test finished in 6.442 seconds
+RESULT passed
+
+TEST 10 - complex matrix operations 3 (smaller than 1000 * 1000, 10 sec timeout)
+Test finished in 3.928 seconds
+RESULT passed
