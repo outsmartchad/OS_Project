@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////GLOBAL VARIABLES/STRUCTS////////////////////////////
 #define MAX_SIZE 1000
-@define EXP_MAX_SIZE 20 //10 matrixs + 9 operands
+#define EXP_MAX_SIZE 20 //10 matrixs + 9 operands
 #define numOfThreads 4
 // defining a matrix structure
 typedef struct{
