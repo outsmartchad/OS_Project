@@ -54,7 +54,7 @@ void init(Stacks* stack){
     assert(stack != NULL);
     stack->matrix_stack_top = -1;
     stack->operation_stack_top = -1;
-    stack->operation_stack = (char*)calloc(MAX_SIZE, sizeof(char));
+    stack->operation_stack = (char*)calloc(EXP_MAX_SIZE, sizeof(char));
     for(int i=0; i<MAX_SIZE; i++){
         stack->matrix_stack[i] = (Matrix*)malloc(sizeof(Matrix));
     }
