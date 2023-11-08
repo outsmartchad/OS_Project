@@ -150,8 +150,8 @@ Matrix * matrix_Subtraction(Matrix *A, Matrix *B){
             C->data[i][j] = A->data[i][j] - B->data[i][j];
         }
     }
-    //release_memory(A);
-    //release_memory(B);
+    release_memory(A);
+    release_memory(B);
     return C;
 }
 
