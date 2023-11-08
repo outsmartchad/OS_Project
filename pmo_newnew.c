@@ -259,15 +259,22 @@ int main() {
     while (s->matrix_stack_top != 0){
         Matrix* B = pop_Mat(s);
         Matrix* A = pop_Mat(s);
+        char now = pop_Op(s);
         int optop = s->operation_stack_top;
-        if (pop_Op(s) == '+'){
-            if (s->operation_stack[optop] == '-'){
+        char front;
+        if (optop == -1){
+            front = ' ';
+        }else{
+            front = s ->operation_stack[optop];
+        }
+        if (now == '+'){
+            if (front== '-'){
                 push_Mat(s,matrix_Subtraction(A,B)); //A-B
             }else{
                 push_Mat(s, matrix_Addition(A,B)); //A+B
             }
         }else{ // pop_Op(s) == '-'
-            if (s->operation_stack[optop] == '-'){
+            if (front== '-'){
                 push_Mat(s, matrix_Addition(A,B)); //A+B
             }else{
                 push_Mat(s,matrix_Subtraction(A,B)); //A-B
