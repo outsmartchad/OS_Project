@@ -41,16 +41,16 @@ int **arr_Allocate_memory(int r, int c);
 void release_memory(Matrix *matrix);
 ////////////////////////////////////////////////////////////////////////////////
 /************* basic function of our stacks ***************/
-int get_operation_stack_size(Stacks* stack){
+int get_operation_stack_size(Stacks* stack){ // not used can delete?
     assert(stack != NULL);
     return stack->operation_stack_top+1;
 }
 
-int get_matrix_stack_size(Stacks* stack){
+int get_matrix_stack_size(Stacks* stack){ // not used can delete?
     assert(stack != NULL);
     return stack->matrix_stack_top+1;
 }
-void init(Stacks* stack){
+void init(Stacks* stack){ // initilize stack
     assert(stack != NULL);
     stack->matrix_stack_top = -1;
     stack->operation_stack_top = -1;
@@ -60,20 +60,20 @@ void init(Stacks* stack){
     }
 }
 
-void push_Op(Stacks* stack, char operator){
+void push_Op(Stacks* stack, char operator){ // push operand into stack
     assert(stack != NULL);
     stack->operation_stack_top++;
     int new_Idx = stack->operation_stack_top;
     stack->operation_stack[new_Idx] = operator;
 }
 
-void push_Mat(Stacks* stack, Matrix* matrix){
+void push_Mat(Stacks* stack, Matrix* matrix){// push matrix into stack
     assert(stack != NULL && matrix!=NULL);
     stack->matrix_stack_top++;
     int new_Idx = stack->matrix_stack_top;
     stack->matrix_stack[new_Idx] = matrix;
 }
-char pop_Op(Stacks* stack){
+char pop_Op(Stacks* stack){ // pop operand from stack
     assert(stack!=NULL);
     int top_idx = stack->operation_stack_top;
     char op = stack->operation_stack[top_idx];
@@ -81,7 +81,7 @@ char pop_Op(Stacks* stack){
     return op;
 }
 
-Matrix* pop_Mat(Stacks* stack){
+Matrix* pop_Mat(Stacks* stack){ // pop matrix from stack
     assert(stack != NULL);
     int top_idx = stack->matrix_stack_top;
     Matrix* matrix = stack->matrix_stack[top_idx];
@@ -90,13 +90,13 @@ Matrix* pop_Mat(Stacks* stack){
     return matrix;
 }
 
-int is_matStack_Empty(Stacks* s){
+int is_matStack_Empty(Stacks* s){ // check is matrix stack empty
     assert(s != NULL);
     return s->matrix_stack_top==-1;
 }
 
 ////////////////////////////////FUNCTIONS///////////////////////////////////////
-Matrix* matrix_Multiplication(Matrix *A, Matrix *B){
+Matrix* matrix_Multiplication(Matrix *A, Matrix *B){ // A*B
     assert(A!=NULL && B!=NULL);
     assert(A->data!=NULL&&B->data!=NULL);
     assert(A->col>0&&B->col>0);
@@ -119,7 +119,7 @@ Matrix* matrix_Multiplication(Matrix *A, Matrix *B){
 }
 
 
-Matrix* matrix_Addition(Matrix *A, Matrix *B){
+Matrix* matrix_Addition(Matrix *A, Matrix *B){ // A+B
     assert(A!=NULL && B!=NULL);
     assert(A->data!=NULL&&B->data!=NULL);
     assert(A->col>0&&B->col>0);
@@ -137,7 +137,7 @@ Matrix* matrix_Addition(Matrix *A, Matrix *B){
     return C;
 }
 
-Matrix * matrix_Subtraction(Matrix *A, Matrix *B){
+Matrix * matrix_Subtraction(Matrix *A, Matrix *B){ // A-B
     assert(A!=NULL && B!=NULL);
     assert(A->data!=NULL&&B->data!=NULL);
     assert(A->col>0&&B->col>0);
@@ -155,7 +155,7 @@ Matrix * matrix_Subtraction(Matrix *A, Matrix *B){
     return C;
 }
 
-void matrix_Print(Matrix* M){
+void matrix_Print(Matrix* M){ // print matrix content
     assert(M!=NULL);
     int row = M->row;
     int col = M->col;
@@ -168,7 +168,7 @@ void matrix_Print(Matrix* M){
     }
 }
 
-void release_memory(Matrix *matrix){
+void release_memory(Matrix *matrix){ // deallocate matrix
     // this method is for releasing the memory of integer array
     assert(matrix!=NULL);
     free(matrix);
@@ -213,10 +213,12 @@ int main() {
     scanf("%s", expression);
     int explen = strlen(expression);
     int noOfMatrix = explen / 2 + 1; // cal how many matrix in expression
+    
     // init the stack object
     Stacks *s = (Stacks*)malloc(sizeof(Stacks));
     // initialize our stack object
     init(s);
+    
     for(int i=0; i<noOfMatrix; i++){ // A loop to input all the matrices
         // second input -> size of a nxm matrix
         int n, m; // n = row, m = col
@@ -239,6 +241,7 @@ int main() {
         arr_Matrices[i] = mat;
     }
     printf("\n");
+    
     // adding stack and char to our stacks and multiply
     for (int i=0;i<explen;i++){
         if (i%2 == 0){
@@ -284,28 +287,6 @@ int main() {
         }
     }
     
-    /*//loop through expression
-    for (int i=1;i<explen;i+=2){
-        char op[1];
-        strncpy(op, expression+i,1);
-        push_Op(s, op[0]);
-    }
-    */
-    /*//test pop op
-    char a = pop_Op(s);
-    if (a == '+')
-        printf("%c\n", a);
-    */
-    //test add
-    //push_Mat(s,matrix_Addition(pop_Mat(s),pop_Mat(s)));
-    //test sub
-    //push_Mat(s,matrix_Subtraction(pop_Mat(s),pop_Mat(s)));
-    //test mul
-    /*
-    Matrix* B = pop_Mat(s);
-    Matrix* A = pop_Mat(s);
-    push_Mat(s,matrix_Multiplication(A,B));
-    */
     //printf("Our stack: \n");
     for(int i=s->matrix_stack_top; i>=0; i--){
         matrix_Print(s->matrix_stack[i]);
