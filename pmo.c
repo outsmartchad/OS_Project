@@ -119,21 +119,41 @@ Matrix* matrix_Multiplication(Matrix *A, Matrix *B){ // A*B
 }
 
 
-Matrix* matrix_Addition(Matrix *A, Matrix *B){ // A+B
+Matrix* matrix_Addition(Matrix *A, Matrix *B, Matrix *C, int rowstart, int rowend, int colstart, int colend){ // A+B
     assert(A!=NULL && B!=NULL);
     assert(A->data!=NULL&&B->data!=NULL);
     assert(A->col>0&&B->col>0);
     assert(A->row>0&&B->row>0);
     int row = A->row;
     int col = B->col;
-    Matrix* C = mat_allocate_memory(row, col);
-    for(int i=0;i<row;i++){
-        for(int j=0;j<col;j++){
-            C->data[i][j] = A->data[i][j] + B->data[i][j];
+    C = mat_allocate_memory(row, col);
+    if (row-rowend == 1 && col-colend == 1){
+        for(int i=rowstart;i<row;i++){
+            for(int j=colstart;j<col;j++){
+                C->data[i][j] = A->data[i][j] + B->data[i][j];
+            }
+        }
+    }else if (row-rowend == 1){
+        for(int i=rowstart;i<row;i++){
+            for(int j=colstart;j<colend;j++){
+                C->data[i][j] = A->data[i][j] + B->data[i][j];
+            }
+        }
+    }else if (col-colend == 1){
+        for(int i=rowstart;i<rowend;i++){
+            for(int j=colstart;j<col;j++){
+                C->data[i][j] = A->data[i][j] + B->data[i][j];
+            }
+        }
+    }else {
+        for(int i=rowstart;i<rowend;i++){
+            for(int j=colstart;j<colend;j++){
+                C->data[i][j] = A->data[i][j] + B->data[i][j];
+            }
         }
     }
-    release_memory(A);
-    release_memory(B);
+    //release_memory(A);
+    //release_memory(B);
     return C;
 }
 
@@ -196,6 +216,11 @@ struct arg_struct
 {
     Matrix *A;
     Matrix *B;
+    Matrix *C;
+    int rowstart;
+    int rowend;
+    int colstart;
+    int colend;
 } *args;
 
 void* printRunning(void* data) {
@@ -211,8 +236,9 @@ void* printRunning(void* data) {
 
 void* threadAddition(void *data) {
     struct arg_struct *args = data;
-    Matrix *ans = malloc(sizeof(Matrix) * 1);
-    ans = matrix_Addition(args->A,args->B);
+    args->C = malloc(sizeof(Matrix) * 1);
+    args->C = matrix_Addition(args->A, args->B, args->C, args->rowstart, args->rowend, args->colstart, args->colend);
+    Matrix *ans = args->C;
     pthread_exit((void*)ans); 
 }
 
@@ -302,6 +328,7 @@ int main() {
     }
 
     // last calculation
+    int count = 0;
     while (s->matrix_stack_top != 0){
         Matrix* B = pop_Mat(s);
         Matrix* A = pop_Mat(s);
@@ -317,14 +344,28 @@ int main() {
         }else{
             front = s ->operation_stack[optop];
         }
+
         if (now == '+'){
             if (front== '-'){
                 pthread_create( &threads[0], NULL, threadSubtraction , args);
                 pthread_join( threads[0], &ans );
                 push_Mat(s,ans); //A-B
             }else{
-                pthread_create( &threads[0], NULL, threadAddition , args);
-                pthread_join( threads[0], &ans );
+                for (int i=0;i<numOfThreads;i++){
+                    if (i<2){
+                        args->rowstart = 0;
+                        args->rowend = A->row/2;
+                        args->colstart = A->col/2 * i;
+                        args->colend = A->col/2 * (i+1);
+                    }else{
+                        args->rowstart = A->row/2;
+                        args->rowend = A->row;
+                        args->colstart = A->col/2 * (i-3);
+                        args->colend = A->col/2 * (i-2);
+                    }
+                    pthread_create( &threads[i], NULL, threadAddition , args);
+                    pthread_join( threads[i], &ans );
+                }
                 push_Mat(s,ans); //A+B
             }
         }else{ // pop_Op(s) == '-'
