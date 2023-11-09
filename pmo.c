@@ -336,11 +336,6 @@ for(int i = 0;i<numOfThreads;i++){
     thread_data_array[i].A = copymatrix(matrixA,i+1);
     thread_data_array[i].B = copymatrix(matrixB,i+1);
 }
-matrix_Print(thread_data_array[0].A);
-matrix_Print(thread_data_array[1].A);
-matrix_Print(thread_data_array[2].A);
-matrix_Print(thread_data_array[3].A);
-matrix_Print(thread_data_array[0].B);
 
 //     args->A[0] = copymatrix(matrixA,1);
 //    matrix_Print(args->A[0]);
@@ -356,8 +351,6 @@ matrix_Print(thread_data_array[0].B);
 //    args->B[2] = copymatrix(matrixB,3);
 //    args->B[3] = copymatrix(matrixB,4);
 
-
-   
 
 }
 
@@ -546,10 +539,6 @@ int main() {
                     pthread_join( threads[i], &tempans[i] );
                 }
                 
-                matrix_Print(tempans[0]);
-                matrix_Print(tempans[1]);
-                matrix_Print(tempans[2]);
-                matrix_Print(tempans[3]);
 
                 //合matrix
                 matrix_Print(combineMatrix((void*)tempans));
