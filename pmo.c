@@ -192,12 +192,45 @@ Matrix* mat_allocate_memory(int r, int c){
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////Threads FUNCTION///////////////////////////////
 
-void *threadFunction1( void *arg )
+struct arg_struct
 {
-    int passValue = *(int *)(arg);
-    printf("Thread %d is running!",passValue);
-    return NULL;
+    Matrix *A;
+    Matrix *B;
+} *args;
+
+void* printRunning(void* data) {
+    struct arg_struct *args = data;
+  //int *str = (int*) data; 
+    printf("Running in Thread %d\n", 1); 
+    printf("\n Matrix:\n");
+    matrix_Print(args->A);
+//   free(str);
+  
+  pthread_exit(NULL); 
 }
+
+void* threadAddition(void *data) {
+    struct arg_struct *args = data;
+    Matrix *ans = malloc(sizeof(Matrix) * 1);
+    ans = matrix_Addition(args->A,args->B);
+    pthread_exit((void*)ans); 
+}
+
+void* threadSubtraction(void *data) {
+    struct arg_struct *args = data;
+    Matrix *ans = malloc(sizeof(Matrix) * 1);
+    ans = matrix_Subtraction(args->A,args->B);
+    pthread_exit((void*)ans); 
+}
+void* threadMultiplication(void *data) {
+    struct arg_struct *args = data;
+    Matrix *ans = malloc(sizeof(Matrix) * 1);
+    ans = matrix_Multiplication(args->A,args->B);
+    pthread_exit((void*)ans); 
+}
+
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -206,6 +239,10 @@ void *threadFunction1( void *arg )
 int main() {
     // pthread variable
     pthread_t * threads;
+    threads = (pthread_t*)malloc(sizeof(pthread_t)*numOfThreads); // allocate memony for thread
+    args = malloc(sizeof(struct arg_struct) * 1);
+    void* ans; //for thread return result of matrix
+
     
     /***** Below is the input part*****/
     // first input -> A-B / A+B*C+D / A*B+C
@@ -252,7 +289,11 @@ int main() {
             char op[1];
             strncpy(op, expression+i,1);
             if (op[0] == '*'){
-                push_Mat(s, matrix_Multiplication(pop_Mat(s), arr_Matrices[i/2+1]));
+                args->A = pop_Mat(s);
+                args->B = arr_Matrices[i/2+1];
+                pthread_create( &threads[0], NULL, threadMultiplication , args);
+                pthread_join( threads[0], &ans );
+                push_Mat(s,ans);
                 arr_Matrices[i/2+1]= NULL;
             }else{
                 push_Op(s, op[0]);
@@ -264,6 +305,10 @@ int main() {
     while (s->matrix_stack_top != 0){
         Matrix* B = pop_Mat(s);
         Matrix* A = pop_Mat(s);
+
+        args->A = A; //for thread
+        args->B = B; //for thread
+
         char now = pop_Op(s);
         int optop = s->operation_stack_top;
         char front;
@@ -274,17 +319,28 @@ int main() {
         }
         if (now == '+'){
             if (front== '-'){
-                push_Mat(s,matrix_Subtraction(A,B)); //A-B
+                pthread_create( &threads[0], NULL, threadSubtraction , args);
+                pthread_join( threads[0], &ans );
+                push_Mat(s,ans); //A-B
             }else{
-                push_Mat(s, matrix_Addition(A,B)); //A+B
+                pthread_create( &threads[0], NULL, threadAddition , args);
+                pthread_join( threads[0], &ans );
+                push_Mat(s,ans); //A+B
             }
         }else{ // pop_Op(s) == '-'
             if (front== '-'){
-                push_Mat(s, matrix_Addition(A,B)); //A+B
+                pthread_create( &threads[0], NULL, threadAddition , args);
+                pthread_join( threads[0], &ans );
+                push_Mat(s,ans); //A+B
             }else{
-                push_Mat(s,matrix_Subtraction(A,B)); //A-B
+                pthread_create( &threads[0], NULL, threadSubtraction , args);
+                pthread_join( threads[0], &ans );
+                push_Mat(s,ans); //A-B
             }
         }
+
+
+
     }
     
     //printf("Our stack: \n");
@@ -296,16 +352,21 @@ int main() {
         pop_Mat(s);
     }
 
-    // // doing threading
+
     // for(int i = 0;i< numOfThreads;i++){
-    //     int *passValue;
-    //     passValue = (int *) malloc( sizeof(int) );
-    //     *passValue = i;
-    //     pthread_create( &threads[i], NULL, threadFunction1, (void *)passValue );
+
+    //     pthread_create( &threads[i], NULL, printRunning, args);
+    //     printf("thread created!(main)\n");
     // }
-    // for (int i = 0; i < numOfThreads; i++ ) {
+
+  
+
+     
+    // for (int i = 0; i < numOfThreads;i++ ) {
     //     pthread_join( threads[i], NULL );
     // }
+
+
     //test
     // push_Mat(s, matrix_Addition(pop_Mat(arr_Matrices),pop_Mat(arr_Matrices)));
     // matrix_Print(pop_Mat(arr_Matrices));
