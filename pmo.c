@@ -256,13 +256,11 @@ void copymatrix(Matrix *dest,Matrix *source,int part){
     dest = mat_allocate_memory(row, col);
     for(int i=startRowIndex;i<endRowIndex;i++){
         for(int j=startColIndex;j<endColIndex;j++){
-            dest->data[i][j] = source->data[i][j];
+            dest->data[destrow][destcol] = source->data[i][j];
             destcol++;
         }
         destrow++;
     }
-    
-
 }
 
 void divideMatrix(Matrix* matrixA,Matrix* matrixB){
@@ -292,7 +290,7 @@ void divideMatrix(Matrix* matrixA,Matrix* matrixB){
 void* threadAddition(void *data) {
     struct arg_struct *args = data;
     Matrix *ans = malloc(sizeof(Matrix) * 1);
-    ans = matrix_Addition(args->A,args->B);
+    ans = matrix_Addition(args->A1,args->B1);
     pthread_exit((void*)ans); 
 }
 
@@ -388,6 +386,7 @@ int main() {
         Matrix* A = pop_Mat(s);
 
         divideMatrix(A,B);
+        matrix_Print(args->A1);
 
         char now = pop_Op(s);
         int optop = s->operation_stack_top;
