@@ -419,10 +419,12 @@ void* threadAddition(void *data) {
 }
 
 void* threadSubtraction(void *data) {
-    struct arg_struct *args = data;
+struct arg_struct *args;
+    args = (struct arg_struct*) data;
     Matrix *ans = malloc(sizeof(Matrix) * 1);
+
     ans = matrix_Subtraction(args->A,args->B);
-    pthread_exit((void*)ans); 
+    pthread_exit((void*)ans);
 }
 void* threadMultiplication(void *data) {
     struct arg_struct *args = data;
@@ -522,9 +524,13 @@ int main() {
         }
         if (now == '+'){
             if (front== '-'){
-                pthread_create( &threads[0], NULL, threadSubtraction ,(void*) &thread_data_array[0]);
-                pthread_join( threads[0], &ans );
-                push_Mat(s,ans); //A-B
+                for(int i=0;i<numOfThreads;i++){
+                    pthread_create( &threads[i], NULL,threadSubtraction, (void*) &thread_data_array[i]);
+                }
+                for (int i = 0; i < numOfThreads; i++)
+                {
+                    pthread_join( threads[i], &tempans[i] );
+                }
             }else{
 
 
@@ -540,23 +546,33 @@ int main() {
                 }
                 
 
-                //合matrix
-                matrix_Print(combineMatrix((void*)tempans));
-               
-                push_Mat(s,ans); //A+B
+                
             }
         }else{ // pop_Op(s) == '-'
             if (front== '-'){
-                pthread_create( &threads[0], NULL, threadAddition ,(void*) &thread_data_array[0]);
-                pthread_join( threads[0], &ans );
-                push_Mat(s,ans); //A+B
+                for(int i=0;i<numOfThreads;i++){
+                    pthread_create( &threads[i], NULL,threadAddition, (void*) &thread_data_array[i]);
+                }
+                for (int i = 0; i < numOfThreads; i++)
+                {
+                    pthread_join( threads[i], &tempans[i] );
+                }
             }else{
-                pthread_create( &threads[0], NULL, threadSubtraction ,(void*) &thread_data_array[0]);
-                pthread_join( threads[0], &ans );
-                push_Mat(s,ans); //A-B
+                for(int i=0;i<numOfThreads;i++){
+                    pthread_create( &threads[i], NULL,threadSubtraction, (void*) &thread_data_array[i]);
+                }
+                for (int i = 0; i < numOfThreads; i++)
+                {
+                    pthread_join( threads[i], &tempans[i] );
+                }
             }
         }
-
+        
+        ans = combineMatrix((void*)tempans);
+                        //合matrix
+        matrix_Print(ans);
+               
+        push_Mat(s,ans);
 
 
     }
