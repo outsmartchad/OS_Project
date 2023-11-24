@@ -32,6 +32,8 @@ struct arg_struct
 {                          
     Matrix *A;
     Matrix *B;
+    Matrix *C;
+    Matrix *D;
 
 };
 
@@ -305,7 +307,7 @@ Matrix* copymatrix(Matrix *source,int part){
     return dest;
 }
 
-void divideMatrix(Matrix* matrixA,Matrix* matrixB){
+void divideMatrix(Matrix* matrixA,Matrix* matrixB,int x){
 
     // for (int i = 0; i < numOfThreads; i++)
     // {
@@ -332,10 +334,33 @@ void divideMatrix(Matrix* matrixA,Matrix* matrixB){
 //    args->B2 = copymatrix(matrixB,2);
 //    args->B3 = copymatrix(matrixB,3);
 //    args->B4 = copymatrix(matrixB,4);
-for(int i = 0;i<numOfThreads;i++){
-    thread_data_array[i].A = copymatrix(matrixA,i+1);
-    thread_data_array[i].B = copymatrix(matrixB,i+1);
+if(x == 1){
+
+        thread_data_array[0].A = copymatrix(matrixA,1);
+        thread_data_array[0].B = copymatrix(matrixB,1);
+        thread_data_array[0].C = copymatrix(matrixA,2);
+        thread_data_array[0].D = copymatrix(matrixB,3);
+        thread_data_array[1].A = copymatrix(matrixA,1);
+        thread_data_array[1].B = copymatrix(matrixB,2);
+        thread_data_array[1].C = copymatrix(matrixA,2);
+        thread_data_array[1].D = copymatrix(matrixB,4);
+        thread_data_array[2].A = copymatrix(matrixA,3);
+        thread_data_array[2].B = copymatrix(matrixB,1);
+        thread_data_array[2].C = copymatrix(matrixA,4);
+        thread_data_array[2].D = copymatrix(matrixB,3);
+        thread_data_array[3].A = copymatrix(matrixA,3);
+        thread_data_array[3].B = copymatrix(matrixB,2);
+        thread_data_array[3].C = copymatrix(matrixA,4);
+        thread_data_array[3].D = copymatrix(matrixB,4);
+
+
+}else{
+    for(int i = 0;i<numOfThreads;i++){
+        thread_data_array[i].A = copymatrix(matrixA,i+1);
+        thread_data_array[i].B = copymatrix(matrixB,i+1);
 }
+}
+
 
 //     args->A[0] = copymatrix(matrixA,1);
 //    matrix_Print(args->A[0]);
@@ -429,8 +454,13 @@ struct arg_struct *args;
 void* threadMultiplication(void *data) {
     struct arg_struct *args = data;
     Matrix *ans = malloc(sizeof(Matrix) * 1);
+    Matrix *ans1 = malloc(sizeof(Matrix) * 1);
+    Matrix *finalans = malloc(sizeof(Matrix) * 1);
     ans = matrix_Multiplication(args->A,args->B);
-    pthread_exit((void*)ans); 
+    ans1 = matrix_Multiplication(args->C,args->D);
+    
+    finalans = matrix_Addition(ans,ans1);
+    pthread_exit((void*)finalans); 
 }
 
 
@@ -497,8 +527,20 @@ int main() {
             if (op[0] == '*'){
                 // args->A = pop_Mat(s);
                 // args->B = arr_Matrices[i/2+1];
-                pthread_create( &threads[0], NULL, threadMultiplication , (void*) &thread_data_array[0]);
-                pthread_join( threads[0], &ans );
+
+
+                divideMatrix(pop_Mat(s),arr_Matrices[i/2+1],1);
+
+                for(int i=0;i<numOfThreads;i++){
+                    pthread_create( &threads[i], NULL,threadMultiplication, (void*) &thread_data_array[i]);
+                }
+                for (int i = 0; i < numOfThreads; i++)
+                {
+                    pthread_join( threads[i], &tempans[i] );
+                }
+
+                ans = combineMatrix((void*)tempans);
+                
                 push_Mat(s,ans);
                 arr_Matrices[i/2+1]= NULL;
             }else{
@@ -512,7 +554,7 @@ int main() {
         Matrix* B = pop_Mat(s);
         Matrix* A = pop_Mat(s);
 
-        divideMatrix(A,B);
+        divideMatrix(A,B,0);
 
         char now = pop_Op(s);
         int optop = s->operation_stack_top;
