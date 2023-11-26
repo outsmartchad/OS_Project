@@ -232,43 +232,33 @@ Matrix* mat_allocate_memory(int r, int c){
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////Threads FUNCTION///////////////////////////////
 
-typedef struct arg_struct
+typedef struct arg_struct    //structure of thread 
 {
-    Matrix *A;
-    Matrix *B;
-    int index;
-    int rowstart;
-    int rowend;
-    int colstart;
-    int colend;
+    Matrix *A;                 //first matrix
+    Matrix *B;                  //second matrix
+    int index;                  // for arr_temp[index]
+    int rowstart;               //determine the row start index of matrix
+    int rowend;                 //determine the row end index of matrix
+    int colstart;               //determine the col start index of matrix
+    int colend;                 //determine the col end index of matrix
 } *args;
 
-void* printRunning(void* data) {
-    struct arg_struct *args = data;
-  //int *str = (int*) data; 
-    printf("Running in Thread %d\n", 1); 
-    printf("\n Matrix:\n");
-    matrix_Print(args->A);
-//   free(str);
-  
-  pthread_exit(NULL); 
-}
 
-void* threadAddition(void *data) {
-    struct arg_struct *args = data;
+void* threadAddition(void *data) {          //thread call addition function
+    struct arg_struct *args = data;          //take data
     matrix_Addition(args->A, args->B, args->index ,args->rowstart, args->rowend, args->colstart, args->colend);
-    pthread_exit(0); 
+    pthread_exit(0);                        //thread exit
 }
 
-void* threadSubtraction(void *data) {
-    struct arg_struct *args = data;
+void* threadSubtraction(void *data) {         //thread call subtraction function
+    struct arg_struct *args = data;             //take data
     matrix_Subtraction(args->A, args->B, args->index ,args->rowstart, args->rowend, args->colstart, args->colend);
-    pthread_exit(0); 
+    pthread_exit(0);                             //thread exit
 }
-void* threadMultiplication(void *data) {
-    struct arg_struct *args = data;
+void* threadMultiplication(void *data) {                 //thread call multiplication function
+    struct arg_struct *args = data;                     //take data
     matrix_Multiplication(args->A,args->B, args->index, args->rowstart, args->rowend, args->colstart, args->colend);
-    pthread_exit(0); 
+    pthread_exit(0);                                    //thread exit
 }
 
 
@@ -337,7 +327,7 @@ int main() {
                 Matrix* B = arr_Matrices[i/2+1];
                 arr_Matrices[i/2+1]= NULL;
                 arr_temp[0] = mat_allocate_memory(A->row, B->col);
-                for (int p=0;p<numOfThreads;p++){
+                for (int p=0;p<numOfThreads;p++){                           //calculate each thread data(the index of matrix)
                     ar[p]->A = A;
                     ar[p]->B = B;
                     ar[p]->index = 0;
@@ -368,10 +358,10 @@ int main() {
                             ar[p]->colend = B->col;
                         }
                     }
-                    pthread_create( &threads[p], NULL, threadMultiplication , ar[p]);
+                    pthread_create( &threads[p], NULL, threadMultiplication , ar[p]);       // create thread
                 }
                 for (int p=0;p<numOfThreads;p++)
-                    pthread_join( threads[p], NULL);
+                    pthread_join( threads[p], NULL);                                        //wait the thread finish the job
                 push_Mat(s,arr_temp[0]);
             }else{
                 push_Op(s, op[0]);
@@ -399,7 +389,7 @@ int main() {
             front = s ->operation_stack[optop];
         }
 
-        for (int i=0;i<numOfThreads;i++){
+        for (int i=0;i<numOfThreads;i++){                           //calculate each thread data(the index of matrix)       
             if (i<2){
                 arr_args[i]->rowstart = 0;
                 arr_args[i]->rowend = A->row/2;
@@ -417,21 +407,21 @@ int main() {
                       
             if (now == '+'){
                 if (front== '-'){
-                    pthread_create( &threads[i], NULL, threadSubtraction , arr_args[i]); //A-B
+                    pthread_create( &threads[i], NULL, threadSubtraction , arr_args[i]); //A-B create pthread to calculate
                 }else{
-                    pthread_create( &threads[i], NULL, threadAddition , arr_args[i]); //A+B  
+                    pthread_create( &threads[i], NULL, threadAddition , arr_args[i]); //A+B  create pthread to calculate
                 }
             }else{ // pop_Op(s) == '-'
                 if (front== '-'){
-                    pthread_create( &threads[i], NULL, threadAddition , arr_args[i]); //A+B
+                    pthread_create( &threads[i], NULL, threadAddition , arr_args[i]); //A+B create pthread to calculate
                 }else{
-                    pthread_create( &threads[i], NULL, threadSubtraction , arr_args[i]); //A-B
+                    pthread_create( &threads[i], NULL, threadSubtraction , arr_args[i]); //A-B  create pthread to calculate
                 }
             }
         }
 
         for (int i=0;i<numOfThreads;i++)
-            pthread_join( threads[i], NULL);
+            pthread_join( threads[i], NULL);                    //wait pthread join
         push_Mat(s,arr_temp[0]);
         
     }
@@ -445,19 +435,6 @@ int main() {
         pop_Mat(s);
     }
 
-
-    // for(int i = 0;i< numOfThreads;i++){
-
-    //     pthread_create( &threads[i], NULL, printRunning, args);
-    //     printf("thread created!(main)\n");
-    // }
-
-  
-
-     
-    // for (int i = 0; i < numOfThreads;i++ ) {
-    //     pthread_join( threads[i], NULL );
-    // }
 
 
     //test
